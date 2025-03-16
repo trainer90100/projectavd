@@ -1,0 +1,34 @@
+{
+	"name": "sql_ds_field",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_db_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SOURCE_COLUMN",
+				"type": "varchar"
+			},
+			{
+				"name": "DESTINATION_COLUMN",
+				"type": "varchar"
+			},
+			{
+				"name": "DATATYPES",
+				"type": "varchar"
+			},
+			{
+				"name": "VALUE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "configuration",
+			"table": "fieldMapping"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

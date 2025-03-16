@@ -1,0 +1,49 @@
+{
+	"name": "sql_db_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_db_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OBJECT_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "Notebook",
+				"type": "varchar"
+			},
+			{
+				"name": "KEY_COLUMN",
+				"type": "varchar"
+			},
+			{
+				"name": "OPERATION",
+				"type": "varchar"
+			},
+			{
+				"name": "ADDED_ON",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ADDED_BY",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "configuration",
+			"table": "config"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

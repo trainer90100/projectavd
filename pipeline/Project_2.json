@@ -1,0 +1,118 @@
+{
+	"name": "Project_2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Iterating_sheet",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.sheetName",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Lookup_config_project_2",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('select Notebook FROM configuration.config where OBJECT_NAME=''' , item(), '''')\n",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "db_config",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "sheet_processing",
+							"type": "DatabricksNotebook",
+							"dependsOn": [
+								{
+									"activity": "Lookup_config_project_2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "@activity('Lookup_config_project_2').output.value[0].Notebook",
+									"type": "Expression"
+								},
+								"baseParameters": {
+									"bronzePath": {
+										"value": "@variables('bronzePath')",
+										"type": "Expression"
+									},
+									"silverPath": {
+										"value": "@variables('silverPath')",
+										"type": "Expression"
+									},
+									"sheetName": {
+										"value": "@item()",
+										"type": "Expression"
+									},
+									"fileName": "ExternalFNLBenchmarkSummarywithPrice.xlsx"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ls_compute",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"sheetName": {
+				"type": "array",
+				"defaultValue": [
+					"Item Detail",
+					"Out of Scope"
+				]
+			}
+		},
+		"variables": {
+			"bronzePath": {
+				"type": "String",
+				"defaultValue": "https://project3avd.blob.core.windows.net/procurementproject/bronze/"
+			},
+			"silverPath": {
+				"type": "String",
+				"defaultValue": "https://project3avd.blob.core.windows.net/procurementproject/silver/"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-03-16T11:46:32Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

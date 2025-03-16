@@ -1,0 +1,137 @@
+{
+	"name": "proj",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_Config",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select * from configuration.config where ID =4",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "db_config",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Operations_Data_Processing_nb",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Lookup_Field_Mapping",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": {
+						"value": "@activity('Lookup_Config').output.firstRow.Notebook",
+						"type": "Expression"
+					},
+					"baseParameters": {
+						"bronzePath": {
+							"value": "@variables('bronzePath')",
+							"type": "Expression"
+						},
+						"silverPath": {
+							"value": "@variables('silverPath')",
+							"type": "Expression"
+						},
+						"inputFile": {
+							"value": "@variables('inputFile')",
+							"type": "Expression"
+						},
+						"fileName": "Automobile_data.csv",
+						"auditPath": {
+							"value": "@variables('auditPath')",
+							"type": "Expression"
+						},
+						"fieldMapping": {
+							"value": "@string(activity('Lookup_Field_Mapping').output.value)",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "new_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Lookup_Field_Mapping",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "sql_ds_field",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"variables": {
+			"bronzePath": {
+				"type": "String",
+				"defaultValue": "abfss://operationproject@project2avd90010.dfs.core.windows.net/bronze/"
+			},
+			"silverPath": {
+				"type": "String",
+				"defaultValue": "abfss://operationproject@project2avd90010.dfs.core.windows.net/silver/"
+			},
+			"inputFile": {
+				"type": "String",
+				"defaultValue": "abfss://operationproject@project2avd90010.dfs.core.windows.net/inputFile/"
+			},
+			"auditPath": {
+				"type": "String",
+				"defaultValue": "abfss://operationproject@project2avd90010.dfs.core.windows.net/audit/"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-03-16T06:51:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
