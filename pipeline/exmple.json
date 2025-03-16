@@ -1,0 +1,28 @@
+{
+	"name": "exmple",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Message",
+					"value": "this weekend is not good"
+				}
+			}
+		],
+		"variables": {
+			"Message": {
+				"type": "String",
+				"defaultValue": "Hello"
+			}
+		},
+		"annotations": []
+	}
+}
